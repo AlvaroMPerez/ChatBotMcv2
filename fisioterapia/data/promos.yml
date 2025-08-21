@@ -1,0 +1,7 @@
+promociones:
+  - id: 1
+    active: true
+    title: "Quimica de 4"
+    description: "Quimica de 4 con un 20% de descuento"
+    price: 500
+  
