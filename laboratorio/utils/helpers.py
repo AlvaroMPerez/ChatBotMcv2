@@ -65,7 +65,7 @@ def is_8_hours(wa_id: str) -> tuple[bool, str]:
         return True, "No hay bloqueo registrado"
 
     bloqueo_dt = unix_to_america(bloqueo_ts)
-    desbloqueo = bloqueo_dt + timedelta(minutes=2) # Cambié de 8 horas a 2 minutos para pruebas
+    desbloqueo = bloqueo_dt + timedelta(minutes=2) # Cambie de 2 horas a 2 minutos para pruebas
     dt_actual = datetime.now(tz=TZ)
     if dt_actual >= desbloqueo:
         #clear_user_state(wa_id)               
@@ -106,5 +106,4 @@ def inactivity(wa_id) -> bool:
     if diferencia.total_seconds() >= 60 * 60:
         clear_user_state(wa_id)
         return True
-
     return False

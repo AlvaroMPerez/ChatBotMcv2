@@ -18,6 +18,8 @@ async def link_promociones() -> List[str] | None:
     }
 
     url = "https://graph.microsoft.com/v1.0/users/a66db278-2cb8-4d2a-8cb5-3824c1dfffb9/drive/root:/promociones:/children"
+    # URL de la carpeta "promociones" en OneDrive
+    
     async with httpx.AsyncClient() as client:
         response = await client.get(url, headers=headers)
 

@@ -2,7 +2,7 @@ import mysql.connector
 from typing import Optional
 import os
 import typing
-from typing import cast, Tuple, List
+from typing import cast, Tuple, List, Any
 
 DB_CONFIG = {
     "host": os.getenv("HOST"),
@@ -26,7 +26,7 @@ def get_bloqueo(wa_id: str) -> Optional[int]:
     conn = mysql.connector.connect(**DB_CONFIG)
     c = conn.cursor()
     c.execute("SELECT desbloqueo_ts FROM bloqueos WHERE wa_id = %s", (wa_id,))
-    row = cast(Optional[Tuple[str,str]],c.fetchone())
+    row : Any = cast(Optional[Tuple[str,str]],c.fetchone())
     c.close()
     conn.close()
     if row is None:

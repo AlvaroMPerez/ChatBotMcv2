@@ -87,6 +87,7 @@ def webhook():
                 wa_id = contact.get("wa_id")
                 if wa_id.startswith("521"):
                     wa_id = "52" + wa_id[3:]
+                    inactivity(wa_id)
             for message in messages:
                 message_id = message.get("id")
                 ts_raw:int = int(message.get("timestamp"))
