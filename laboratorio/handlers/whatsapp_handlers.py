@@ -57,12 +57,11 @@ class MessageHandler:
             raise ValueError("BUSINESS_PHONE_NUMBER_ID no puede ser None. Asegúrate de definirlo correctamente.")
         if self.wa_id is None:
             raise ValueError("wa_id cannot be None")
-        passed, msg = is_8_hours(self.wa_id)
+        passed = is_8_hours(self.wa_id)
         if passed: 
             if get_user_state(self.wa_id) is None:
                 set_user_state(self.wa_id, "inicio")
             # clear_user_state(self.wa_id)  # Limpiamos el estado del usuario si ya pasaron 8 horas
-            print(f"✅ Usuario desbloqueado: {msg}")
             
             user_state = get_user_state(self.wa_id)
             if user_state is None:
@@ -171,11 +170,23 @@ class MessageHandler:
                         f"¡Hola {self.name or 'paciente'}! Actualmente no nos encontramos en la oficina :(."
                         "Estamos disponibles de lunes a viernes de 7 AM a 3 PM."
                     )
-            return  
+            elif self.wants_agent():
+                is_8_hours(self.wa_id)
+                if self.horario:
+                    from flows.laboratorio import Laboratorio
+                    lab = Laboratorio(self)
+                    lab.agente_atiende_domicilio()
+                    
+            else:
+                # Si no enciende el mensaje, entra en fallback 
+                if get_user_state(self.wa_id) == "inicio":
+                    from handlers.fallback_handler import Fallback_Handler
+                    fallback = Fallback_Handler(self.wa_id,self.name,self.ts_raw)
+                    fallback.fallback()
+            return
         else:
             # Usuario bloqueado, no puede enviar mensajes
-            print(f"❌ Usuario bloqueado: {msg}")
-            send_whatsapp_message(BUSINESS_PHONE_NUMBER_ID, self.wa_id, msg)
+            print(f"❌ Usuario bloqueado")
             return
 
     # ---------- Parte 2 – Estados de Laboratorio ----------
@@ -264,9 +275,14 @@ class MessageHandler:
         tokens = re.findall(r"\w+", self.body.lower())
         return any(tok in APPOINTMENT_KEYWORDS for tok in tokens)
     
+    def wants_agent(self) -> bool:
+        APPOINTMENT_KEYWORDS = ["Asesor"]
+        tokens = re.findall(r"\w+", self.body.lower())
+        return any(tok in APPOINTMENT_KEYWORDS for tok in tokens)
+    
     # --------- Saludos ---------
     def greetings(self) -> bool:
-        GREETING_KEYWORDS = ["hola", "buenos días", "buenas tardes", "buenas noches", "saludos"]
+        GREETING_KEYWORDS = ["hola", "buenos", "buenas", "saludos"]
         tokens = re.findall(r"\w+", self.body.lower())
         return any(tok in GREETING_KEYWORDS for tok in tokens)
     # ---------- Helpers ----------

@@ -10,6 +10,9 @@ from models.bloqueos import (clear_bloqueo,
 import os
 import asyncio
 from typing import  List
+from dotenv import load_dotenv
+
+load_dotenv()
 
 BUSINESS_PHONE_NUMBER_ID = os.getenv("BUSINESS_PHONE_NUMBER_ID")
 
@@ -191,7 +194,7 @@ class Laboratorio:
         clear_user_state(self.wa_id)
         clear_bloqueo(self.wa_id)
         set_bloqueo(self.wa_id, self.ts_raw)
-
+        
     # ------ Finalizar flujo -----
     def finalizar(self) -> None:
         body = "Gracias por contactarnos. ¡Que tenga un buen día!"

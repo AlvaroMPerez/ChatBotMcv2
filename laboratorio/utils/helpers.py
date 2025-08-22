@@ -54,7 +54,7 @@ def esta_en_horario(ts_raw:int) -> bool:
         return True
 
  # ---- Verificar si han pasado 8 horas desde el ultimo mensaje ----
-def is_8_hours(wa_id: str) -> tuple[bool, str]:
+def is_8_hours(wa_id: str) -> bool:
     """
     Devuelve:
       (True,  "Usuario desbloqueado")  si la ventana ya expiró o nunca existió bloqueo.
@@ -62,14 +62,14 @@ def is_8_hours(wa_id: str) -> tuple[bool, str]:
     """
     bloqueo_ts = get_bloqueo(wa_id)          # debería devolver int|None
     if bloqueo_ts is None:
-        return True, "No hay bloqueo registrado"
+        return True
 
     bloqueo_dt = unix_to_america(bloqueo_ts)
     desbloqueo = bloqueo_dt + timedelta(minutes=2) # Cambie de 2 horas a 2 minutos para pruebas
     dt_actual = datetime.now(tz=TZ)
     if dt_actual >= desbloqueo:
         #clear_user_state(wa_id)               
-        return True, "Usuario desbloqueado"
+        return True
 
     # Aún bloqueado → calculamos tiempo restante
     diferencia = desbloqueo - dt_actual
@@ -80,7 +80,7 @@ def is_8_hours(wa_id: str) -> tuple[bool, str]:
         f"Usuario bloqueado. Desbloqueo en "
         f"{horas_restantes} horas y {minutos_restantes} minutos."
     )
-    return False, mensaje
+    return False
 
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo

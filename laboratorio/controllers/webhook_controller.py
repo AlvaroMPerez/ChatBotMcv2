@@ -8,6 +8,7 @@ from datetime import datetime
 from models.message_model import save_message_id, message_id_exist
 from services.whatsapp_service import send_whatsapp_message
 from handlers.whatsapp_handlers import MessageHandler
+from handlers.fallback_handler import Fallback_Handler
 from flows.laboratorio import Laboratorio
 from models.user_state import (print_all_user_states,
                                clear_user_state)
@@ -116,7 +117,6 @@ def webhook():
                 lab = Laboratorio(handler)
                 
                 
-
     return jsonify({"status": "ok"}), 200
 
 @webhook_bp.route('/webhook', methods=['GET'])

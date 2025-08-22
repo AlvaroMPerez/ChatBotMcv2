@@ -1,6 +1,12 @@
 import httpx
 from microsoft.graph import Graph
 from typing import List
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+email = os.getenv("EMAIL")
 
 async def link_promociones() -> List[str] | None:
     """
@@ -16,8 +22,11 @@ async def link_promociones() -> List[str] | None:
     headers = {
         "Authorization": f"Bearer {token}"
     }
-
-    url = "https://graph.microsoft.com/v1.0/users/a66db278-2cb8-4d2a-8cb5-3824c1dfffb9/drive/root:/promociones:/children"
+    
+    if not email:
+        raise ValueError("EMAIL no está definido en las variables de entorno.")
+    
+    url = f"https://graph.microsoft.com/v1.0/users/{email}/drive/root:/promociones:/children"
     # URL de la carpeta "promociones" en OneDrive
     
     async with httpx.AsyncClient() as client:
